@@ -1,2 +1,2 @@
 # Exercicios_R
-  Contém exercícios e alguns projetos mais simples.
+  Contém exercícios, projetos mais simples e scripts com comandos úteis

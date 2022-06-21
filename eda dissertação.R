@@ -5,12 +5,13 @@ library(data.table)
 library(tidyverse)
 library(corrplot)
 library(corrgram)
-
+library(ExPanDaR)
 ## Importando os dados e definindo o painel com os estados
 P.ANUAL <- read_csv(file.choose())
 
 data_panel<-pdata.frame(P.ANUAL, index=c('UF',"ANO")) %>%
-  arrange(UF)
+  arrange(UF) %>%
+  select(-7)
 
 ## As visualizações e análise exploratório em cima do painel servirão 
 ## para visualizar os níveis das variáveis quantitativas nos estados.
@@ -19,6 +20,12 @@ data_panel<-pdata.frame(P.ANUAL, index=c('UF',"ANO")) %>%
 head(data_panel)
 str(data_panel)
 str(P.ANUAL[c('QE', 'OE')])
+
+#verificando se o painel e balanceado
+pdim(data_panel)
+
+#verificando a variacao das variaveis no tempo e individuos
+pvar(data_panel)
 
 ## Medidas de Tendencia Central
 summary(data_panel)
@@ -50,7 +57,6 @@ hist(data_panel$PEC, main = "Histograma para o preço do etanol para o consumidor
 hist(data_panel$PEP, main = "Histograma para o preço do etanol para o produtor nos estados", xlab = "R$")
 hist(data_panel$PGC, main = "Histograma para o preço da gasolina para o consumidor nos estados", xlab = "R$")
 hist(data_panel$PGP, main = "Histograma para o preço da gasolina para o produtor nos estados", xlab = "R$")
-
 
 ## Analisando a evolução das variáveis quantitativas ao longo do tempo
 plot(data_panel$Y, main = "PIB pc nos estados")
@@ -86,10 +92,10 @@ cor.test(data_panel$QE, data_panel$OE, method = c('pearson', 'kendall', 'spearma
 
 # Obtendo apenas as colunas numericas
 colunas_numericas <- sapply(data_panel, is.numeric)
-colunas_numericas
+colunas_numericas 
 
 # Filtrando as colunas numericas para correlacao
-data_cor <- cor(data_panel[,colunas_numericas])
+data_cor <- cor(data_panel[,colunas_numericas]) 
 data_cor
 head(data_cor)
 
@@ -98,7 +104,7 @@ corrplot(data_cor, method = 'color')
 
 # Criando um corrgram
 corrgram(data_cor)
-corrgram(data_panel, order = TRUE, lower.panel = panel.shade,
+corrgram(data_cor, order = TRUE, lower.panel = panel.shade,
          upper.panel = panel.pie, text.panel = panel.txt)
 
 ## Avaliando a normalidade da distribuição 
@@ -131,6 +137,4 @@ shapiro.test(data_panel$CEAN)
 ggqqplot(data_panel$CEAN, ylab = "Consumo de etanol anidro") #não
 
 ## Agora fazendo uma EDA mais completa com o auxilio desse pacote
-install.packages("ExPanDaR")
-library(ExPanDaR)
 ExPanD(data_panel, cs_id = "UF", ts_id = "ANO")

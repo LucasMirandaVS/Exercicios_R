@@ -13,7 +13,6 @@ data_panel<- pdata.frame(P.ANUAL, index=c('UF',"ANO")) %>%
   arrange(UF)
 
 summary(data_panel)
-
 #verificando se o painel e balanceado
 pdim(data_panel)
 
@@ -51,10 +50,10 @@ modelo1_1 <- plm(log(QE)~log(PEC)+
                  model = 'random')
 summary(modelo1_1)
 
-# Testes estatísticos
+# Testes estatÃ­sticos
 # chow - heterogeneidade entre os estados
-# hausman - indica efeito fixo ou variável
-# wooldridge - autocorrelação
+# hausman - indica efeito fixo ou variÃ¡vel
+# wooldridge - autocorrelaÃ§Ã£o
 # Wald - heteroscedasticidade
 ########################
 ### TESTE DE HAUSMAN ###
@@ -75,19 +74,19 @@ pooltest(form, data = P.ANUAL, model = "within")
 ###########################
 ### TESTE DE WOOLDRIDGE ###
 ###########################
-pwartest(modelo1) # O teste indicou a presença de autocorrelação
+pwartest(modelo1) # O teste indicou a presenÃ§a de autocorrelaÃ§Ã£o
 
 #####################
 ### TESTE DE WALD ###
 #####################
-pwaldtest(modelo1) #indicou a presença de heteroscedasticidade
+pwaldtest(modelo1) #indicou a presenÃ§a de heteroscedasticidade
 
 #########
-# Corrigindo o problema com os erros padrão de Driscoll-Kraay
+# Corrigindo o problema com os erros padrÃ£o de Driscoll-Kraay
 lmtest::coeftest(modelo1,
                  vcov. = function(x) vcovSCC(x, type = "HC0"))
 
-# Esses são os resultados que devem ser interpretados
+# Esses sÃ£o os resultados que devem ser interpretados
 
 #####
 # Otimizando o modelo
@@ -117,8 +116,8 @@ P.ANUAL$dms[P.ANUAL$UF == 'MS'] <- 1
 painel <- pdata.frame(P.ANUAL, index=c('UF',"ANO")) %>%
   arrange(UF)
 
-# agora vou refazer as estimações
-##estimador de efeitos fixos (versão completa)
+# agora vou refazer as estimaÃ§Ãµes
+##estimador de efeitos fixos (versÃ£o completa)
 modelo2 <- plm(log(QE)~
                  log(PEC)+log(PGC)+log(TxF)+log(Y)+factor(ANO)+
                             log(PEC)*D1+log(PGC)*D1+
@@ -132,10 +131,10 @@ modelo2 <- plm(log(QE)~
                           data = painel, model = 'within')
 summary(modelo2) 
 
-# Coeficientes com erros padrão driscol-kraay
+# Coeficientes com erros padrÃ£o driscol-kraay
 
 lmtest::coeftest(modelo2, vcov. = function(x) vcovSCC(x, type = "HC0"))
-# Esses são os resultados que devem ser interpretados
+# Esses sÃ£o os resultados que devem ser interpretados
 
 # Nonparametric robust covariance matrix estimators a la Driscoll and Kraay 
 matrizDK2 <- vcovSCC(modelo2, 
